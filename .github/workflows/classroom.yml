@@ -94,14 +94,4 @@ jobs:
         COVERAGE_RESULTS: "${{ steps.analysis.outputs.coverage }}"
         TESTS_RESULTS: "${{ steps.tests.outputs.result }}"
       with:
-        runners: |
-          {
-            "coverage": {
-              "name": "Cobertura de Testes",
-              "result": "${{ steps.analysis.outputs.coverage }}"
-            },
-            "tests": {
-              "name": "Testes",
-              "result": "${{ steps.tests.outputs.result }}"
-            }
-          } 
+        runners: "coverage,tests" 
