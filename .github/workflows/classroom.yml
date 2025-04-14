@@ -2,9 +2,9 @@ name: Autograding Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
   repository_dispatch:
 
@@ -36,6 +36,7 @@ jobs:
       id: tests
       run: |
         pytest --cov=./ --cov-report=xml
+        echo "result=$(pytest --junitxml=test-results.xml)" >> $GITHUB_OUTPUT
         
     - name: Analisar resultados dos testes
       id: analysis
@@ -54,8 +55,6 @@ jobs:
         coverage_percentage = line_rate * 100
         
         # Contar testes falhados
-        import subprocess
-        result = subprocess.run(['pytest', '--junitxml=test-results.xml'], capture_output=True, text=True)
         tree = ET.parse('test-results.xml')
         root = tree.getroot()
         total_tests = int(root.attrib['tests'])
@@ -76,6 +75,9 @@ jobs:
         with open('test-report.json', 'w') as f:
             json.dump(report, f, indent=2)
             
+        # Definir output de cobertura
+        print(f'::set-output name=coverage::{coverage_percentage}')
+            
         # Verificar se a cobertura é 100%
         if coverage_percentage < 100:
             print('::error::Cobertura de testes insuficiente: {:.2f}%'.format(coverage_percentage))
@@ -94,4 +96,4 @@ jobs:
         COVERAGE_RESULTS: "${{ steps.analysis.outputs.coverage }}"
         TESTS_RESULTS: "${{ steps.tests.outputs.result }}"
       with:
-        runners: "coverage,tests" 
+        runners: coverage,tests
