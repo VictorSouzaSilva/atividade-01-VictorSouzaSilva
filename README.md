@@ -2,6 +2,66 @@
 
 Este repositório contém exercícios práticos de TDD (Test-Driven Development) que abordam diferentes cenários do mundo real. O primeiro exercício será desenvolvido em conjunto, servindo como exemplo, e os demais serão implementados pelos alunos.
 
+## Métodos de Execução
+
+### 1. Usando GitHub Codespaces (Recomendado)
+
+O GitHub Codespaces oferece um ambiente de desenvolvimento pronto para uso, sem necessidade de configuração local.
+
+#### Como Usar:
+1. Clique no botão "Code" no repositório
+2. Selecione "Open with Codespaces"
+3. Aguarde a inicialização do ambiente
+4. O ambiente já vem com:
+   - Python instalado
+   - pytest e pytest-cov configurados
+   - Extensões úteis do VS Code
+   - Terminal integrado
+
+#### Vantagens:
+- Sem necessidade de instalar nada localmente
+- Ambiente consistente para todos
+- Configuração automática
+- Acesso de qualquer dispositivo
+
+### 2. Execução Local (Alternativa)
+
+Se preferir executar localmente, siga estas instruções:
+
+#### Pré-requisitos:
+- Python 3.8 ou superior
+- Git instalado
+- Terminal/Command Prompt
+
+#### Configuração:
+1. Clone o repositório:
+   ```bash
+   git clone [URL_DO_REPOSITÓRIO]
+   cd tdd-python
+   ```
+
+2. Crie um ambiente virtual (recomendado):
+   ```bash
+   # Windows
+   python -m venv venv
+   .\venv\Scripts\activate
+
+   # Linux/Mac
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. Instale as dependências:
+   ```bash
+   pip install pytest pytest-cov
+   ```
+
+4. Verifique a instalação:
+   ```bash
+   pytest --version
+   pytest-cov --version
+   ```
+
 ## Exercícios Disponíveis
 
 ### 1. Sistema de Pagamento de Funcionários (Desenvolvido em Conjunto)
@@ -31,7 +91,7 @@ Implemente um sistema de controle de estoque com os seguintes requisitos:
 - Cálculo de perdas
 
 **Requisitos de Cobertura:**
-- Mínimo de 90% de cobertura de código
+- Mínimo de 100% de cobertura de código
 - Testes para todos os métodos públicos
 - Testes para casos de erro e exceções
 - Testes para valores limite
@@ -71,7 +131,7 @@ Implemente um sistema de controle de estoque com os seguintes requisitos:
 ## Critérios de Avaliação
 
 O GitHub Actions irá analisar para cada exercício:
-- Porcentagem de cobertura de código (mínimo 90%)
+- Porcentagem de cobertura de código (mínimo 100%)
 - Número de testes passados/falhados
 - Porcentagem de testes passados
 - Qualidade dos testes (completude e robustez)
@@ -100,7 +160,7 @@ Para cada exercício, siga o ciclo TDD:
 1. Faça um fork deste repositório
 2. Implemente o exercício de estoque
 3. Certifique-se de que todos os testes passam
-4. Verifique se a cobertura está acima de 90%
+4. Verifique se a cobertura está acima de 100%
 5. Faça um pull request com sua implementação
 6. O professor avaliará:
    - Qualidade dos testes
@@ -133,7 +193,7 @@ O GitHub Actions está configurado para avaliar automaticamente a cobertura de t
 ### Critérios de Aprovação
 
 Para ser aprovado, seu código deve:
-- Ter no mínimo 90% de cobertura total
+- Ter no mínimo 100% de cobertura total
 - Ter todos os métodos públicos testados
 - Ter testes para casos de erro e exceções
 - Ter testes para valores limite
@@ -158,4 +218,43 @@ pytest --cov=./ --cov-report=html
 
 ### Exemplo de Badge de Cobertura
 
-![Cobertura de Testes](https://img.shields.io/badge/coverage-90%25-green) 
+![Cobertura de Testes](https://img.shields.io/badge/coverage-100%25-green)
+
+## Problemas Técnicos? Google it!
+
+Se você está no 7º período e ainda não sabe usar o Google para resolver problemas básicos de Git/configuração, está na hora de aprender.
+
+### Exemplo de Problema:
+"AH NÃO SEI FAZER ISSO NO MEU COMPUTADOR"
+
+### Solução:
+1. [GOOGLE.COM](https://www.google.com)
+2. Digite sua dúvida
+3. Aplique a solução
+
+### Exemplos de Buscas Úteis:
+- "git config port 443"
+- "git connection error"
+- "git proxy settings"
+
+### Dica Profissional:
+Aprender a pesquisar é tão importante quanto aprender a programar. Stack Overflow, ChatGPT, documentação oficial são seus melhores amigos.
+
+---
+
+## Configurando Git via SSH na porta 443
+
+Se sua rede bloqueia a porta padrão do SSH (22), você pode forçar o Git a usar a porta 443 editando o arquivo de configuração do SSH.
+
+### Passos:
+
+1. Acesse (ou crie) o arquivo `~/.ssh/config`
+2. Adicione o seguinte conteúdo:
+
+```bash
+Host github.com
+  HostName ssh.github.com
+  Port 443
+  User git
+  IdentityFile ~/.ssh/id_rsa
+```
