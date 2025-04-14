@@ -1,39 +1,107 @@
 name: Autograding Tests
+
 on:
-  - push
-  - workflow_dispatch
-  - repository_dispatch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  repository_dispatch:
+
 permissions:
   checks: write
   actions: read
   contents: read
+
 jobs:
   run-autograding-tests:
     runs-on: ubuntu-latest
     if: github.actor != 'github-classroom[bot]'
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      # This is where you place your autograding tests
-      # For more information on this runner, see the documentation at: https://github.com/classroom-resources/autograding-io-grader
-      #
-      # For example, you could run a test suite like this:
-      # - name: Run tests
-      #   uses: classroom-resources/autograding-io-grader@v1
-      #     with:
-      #       test-name: Addition Test
-      #       id: addition-test
-      #       command: "./bin/add.sh"
-      #       input: 1 2
-      #       expected-output: 3
-      #       comparison-method: exact
-      #       timeout: 10
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Instalar dependências
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        
+    - name: Executar testes com cobertura
+      id: tests
+      run: |
+        pytest --cov=./ --cov-report=xml
+        
+    - name: Analisar resultados dos testes
+      id: analysis
+      run: |
+        python -c "
+        import xml.etree.ElementTree as ET
+        import json
+        import os
+        
+        # Ler o arquivo de cobertura
+        tree = ET.parse('coverage.xml')
+        root = tree.getroot()
+        
+        # Calcular cobertura
+        line_rate = float(root.attrib['line-rate'])
+        coverage_percentage = line_rate * 100
+        
+        # Contar testes falhados
+        import subprocess
+        result = subprocess.run(['pytest', '--junitxml=test-results.xml'], capture_output=True, text=True)
+        tree = ET.parse('test-results.xml')
+        root = tree.getroot()
+        total_tests = int(root.attrib['tests'])
+        failed_tests = int(root.attrib['failures'])
+        passed_tests = total_tests - failed_tests
+        pass_percentage = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
+        
+        # Criar relatório
+        report = {
+            'cobertura': round(coverage_percentage, 2),
+            'testes_passados': passed_tests,
+            'testes_falhados': failed_tests,
+            'total_testes': total_tests,
+            'porcentagem_passados': round(pass_percentage, 2)
+        }
+        
+        # Salvar relatório
+        with open('test-report.json', 'w') as f:
+            json.dump(report, f, indent=2)
+            
+        # Verificar se a cobertura é 100%
+        if coverage_percentage < 100:
+            print('::error::Cobertura de testes insuficiente: {:.2f}%'.format(coverage_percentage))
+            exit(1)
+        "
+        
+    - name: Upload relatório
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report
+        path: test-report.json
+        
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
-      # For more information on this runner, see the documentation at https://github.com/classroom-resources/autograding-grading-reporter
-      # To output the results of the tests, you can use the
-      # autograding-grading-reporter action like this:
-      # env:
-      # ADDITION-TEST_RESULTS: "${{ steps.addition - test.outputs.result }}"
-      #     with:
-      #         runners: addition-test
+      env:
+        COVERAGE_RESULTS: "${{ steps.analysis.outputs.coverage }}"
+        TESTS_RESULTS: "${{ steps.tests.outputs.result }}"
+      with:
+        runners: |
+          {
+            "coverage": {
+              "name": "Cobertura de Testes",
+              "result": "${{ steps.analysis.outputs.coverage }}"
+            },
+            "tests": {
+              "name": "Testes",
+              "result": "${{ steps.tests.outputs.result }}"
+            }
+          } 
