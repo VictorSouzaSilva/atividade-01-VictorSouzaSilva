@@ -244,7 +244,7 @@ Aprender a pesquisar é tão importante quanto aprender a programar. Stack Overf
 
 ## Configurando Git via SSH na porta 443
 
-Se sua rede bloqueia a porta padrão do SSH (22), você pode forçar o Git a usar a porta 443 editando o arquivo de configuração do SSH.
+A rede da Unievangelica bloqueia a porta padrão do SSH (22), você pode forçar o Git a usar a porta 443 editando o arquivo de configuração do SSH.
 
 ### Passos:
 
