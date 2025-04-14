@@ -7,7 +7,14 @@ from typing import Dict, List
 
 @dataclass
 class Aluno:
-    """Representação básica de um aluno."""
+    """Representação de um aluno no sistema de notas.
+    
+    Attributes:
+        nome: Nome do aluno
+        matricula: Número de matrícula do aluno
+        notas: Dicionário com as notas por disciplina
+        faltas: Dicionário com o número de faltas por disciplina
+    """
 
     nome: str
     matricula: str
